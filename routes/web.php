@@ -14,3 +14,12 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['middleware' => 'cors'], function(){
+	Route::get('Login','loginController@Acceso');
+
+	Route::group(['middleware' => ['jwt.auth']], function ()
+        {
+	
+		});
+});
