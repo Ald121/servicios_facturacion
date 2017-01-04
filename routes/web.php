@@ -20,11 +20,16 @@ Route::group(['middleware' => 'cors'], function(){
 
 	Route::group(['middleware' => ['jwt.auth']], function ()
         {
+            //Sesion
+            Route::post('Salir','loginController@Salir');
+            //Permisos
+            Route::post('Get_Permisos','PermisosController@Get_Permisos');
+            Route::post('Gen_Permisos_Admin','PermisosController@Gen_Permisos_Admin');
         	//Categorias 
-        	Route::post('Add_Categoria','caregoriasController@Add_Categoria');
-        	Route::post('Update_Categoria','caregoriasController@Update_Categoria');
-        	Route::post('Delete_Categoria','caregoriasController@Delete_Categoria');
-        	Route::post('Get_Marcas','caregoriasController@Get_Marcas');
+        	Route::post('Add_Categorias','categoriasController@Add_Categoria');
+        	Route::post('Update_Categorias','categoriasController@Update_Categoria');
+        	Route::post('Delete_Categorias','categoriasController@Delete_Categoria');
+        	Route::post('Get_Categorias','categoriasController@Get_Categorias');
         	//Marcas 
         	Route::post('Add_Marcas','MarcasController@Add_Marcas');
         	Route::post('Update_Marcas','MarcasController@Update_Marcas');

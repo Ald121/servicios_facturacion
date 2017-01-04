@@ -38,4 +38,16 @@ class loginController extends Controller
         //return response()->json(["respuesta"=>$name_bdd]);
            
     }
+
+    public function Salir(Request $request){
+         
+         $token = JWTAuth::getToken();
+        if ($token) {
+            JWTAuth::setToken($token)->invalidate();
+            return response()->json(["respuesta"=>true]);
+        }
+        return response()->json(["respuesta"=>false]);
+        //return response()->json(["respuesta"=>$name_bdd]);
+           
+    }
 }
