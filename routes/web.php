@@ -50,6 +50,8 @@ Route::group(['middleware' => 'cors'], function(){
         	Route::post('Update_Proveedores','ProveedoresController@Update_Proveedores');
         	Route::post('Delete_Proveedores','ProveedoresController@Delete_Proveedores');
         	Route::post('Get_Proveedores','ProveedoresController@Get_Proveedores');
+            //Tipos de Gastos 
+            Route::post('Get_Tipo_Gastos','Tipo_GastosController@Get_Tipo_Gastos');
 	
 		});
 });
