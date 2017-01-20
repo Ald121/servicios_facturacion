@@ -21,6 +21,16 @@ class categoriasController extends Controller
         $this->user=$decoded;
     }
 
+    public function Existencia_Categorias(Request $request)
+    {
+    $datos=DB::table('inventario.categorias')->where('nombre',$request->nombre)->first();
+        if (count($datos)==0) {
+            return response()->json(['respuesta' => true], 200);
+        }else{
+            return response()->json(['respuesta' => false], 200);
+        }
+    }
+
   public function Add_Categoria(Request $request)
     {
     DB::table('inventario.categorias')->insert(['nombre' => $request->nombre, 'descripcion' => $request->descripcion, 'estado' => 'A']);

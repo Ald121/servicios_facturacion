@@ -27,9 +27,9 @@ class loginController extends Controller
 
         if ($checkpass) {
          $datos = DB::table('usuarios.usuarios')->select('id','nick')->where('nick',$request->nick)->first();
-         // $extra=['nbdb'=>$name_bdd,'pnb'=>$pass_bdd,'ruc'=>$acceso->nick];
-         // $token = JWTAuth::fromUser($datos,$extra);
-         $token = JWTAuth::fromUser($datos);
+         $extra=['id'=>$datos->id];
+         $token = JWTAuth::fromUser($datos,$extra);
+         // $token = JWTAuth::fromUser($datos);
          $datosUser=DB::table('usuarios.usuarios')->select('id','nick')->where('nick',$request->nick)->first();
          //DB::table('usuarios.usuarios')->where('nick',$user)->update(["token"=>$token]);
          return response()->json(['respuesta'=>true,'token'=>$token,'datosUser'=>$datosUser]);

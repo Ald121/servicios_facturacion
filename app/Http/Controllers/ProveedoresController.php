@@ -21,6 +21,16 @@ class ProveedoresController extends Controller
         $this->user=$decoded;
     }
 
+    public function Existencia_Proveedores(Request $request)
+    {
+    $datos=DB::table('inventario.productos')->where('ruc',$request->nombre)->first();
+        if (count($datos)==0) {
+            return response()->json(['respuesta' => true], 200);
+        }else{
+            return response()->json(['respuesta' => false], 200);
+        }
+    }
+
   public function Add_Proveedores(Request $request)
     {
     	$celular=array_key_exists('celular', $request->input('proveedor'))?$request->input('proveedor')['celular']:null;

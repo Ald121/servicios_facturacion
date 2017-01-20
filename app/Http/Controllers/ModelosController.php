@@ -20,6 +20,16 @@ class ModelosController extends Controller
         $this->user=$decoded;
     }
 
+public function Existencia_Modelos(Request $request)
+    {
+    $datos=DB::table('inventario.modelos')->where('nombre',$request->nombre)->first();
+        if (count($datos)==0) {
+            return response()->json(['respuesta' => true], 200);
+        }else{
+            return response()->json(['respuesta' => false], 200);
+        }
+    }
+
   public function Add_Modelos(Request $request)
     {
     DB::table('inventario.modelos')->insert(['nombre' => $request->nombre, 'descripcion' => $request->descripcion, 'estado' => 'A']);

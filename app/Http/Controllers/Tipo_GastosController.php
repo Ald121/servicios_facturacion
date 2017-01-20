@@ -21,6 +21,16 @@ class Tipo_GastosController extends Controller
         $this->user=$decoded;
     }
 
+    public function Existencia_Productos(Request $request)
+    {
+    $datos=DB::table('inventario.tipo_gastos')->where('nombre',$request->nombre)->first();
+        if (count($datos)==0) {
+            return response()->json(['respuesta' => true], 200);
+        }else{
+            return response()->json(['respuesta' => false], 200);
+        }
+    }
+
     public function Get_Tipo_Gastos(Request $request)
     {
     $currentPage = $request->pagina_actual;
