@@ -11,7 +11,9 @@
          "guzzlehttp/guzzle": "^6.2",
         "tymon/jwt-auth": "0.5.*",
         "firebase/php-jwt": "^4.0",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "barryvdh/laravel-dompdf": "^0.7.0",
+        "laravelcollective/html": "5.3."
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

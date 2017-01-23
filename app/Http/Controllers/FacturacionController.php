@@ -11,6 +11,7 @@ use DB;
 use \Firebase\JWT\JWT;
 use Image;
 use File;
+use Storage;
 
 class FacturacionController extends Controller
 {
@@ -21,6 +22,8 @@ class FacturacionController extends Controller
         $key=config('jwt.secret');
         $decoded = JWT::decode($request->token, $key, array('HS256'));
         $this->user=$decoded;
+        //Paths
+        $this->pathLocal  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix();
     }
 
     public function Existencia_Facturas(Request $request)
@@ -40,24 +43,72 @@ class FacturacionController extends Controller
     	$totales=$request->input('totales');
     	$id_fac=$this->funciones->generarID();
 
+    	$id_cliente=($cliente['telefono']=="999999")?"":$cliente['id'];
+    	$datos_serie=DB::table('facturacion_proformas.factura_venta')->select('serie')->orderBy('id','DESC')->first();
+    	$serie=(count($datos_serie)>0)? str_pad((integer)$datos_serie->serie+1, 8, '0', STR_PAD_LEFT): str_pad(1, 8, '0', STR_PAD_LEFT);
+    	
+
     DB::table('facturacion_proformas.factura_venta')->insert(
     	[
     	   'id'=>$id_fac,
-    	   'id_cliente'=>$cliente['id'],
+    	   'id_cliente'=>$id_cliente,
     	   'id_usuario'=>$this->user->id,
     	   // 'forma_pago'=>$cliente->,
-    	   'serie'=>'00000',
+    	   'serie'=>$serie,
 	       'subtotal'=>$totales[0]['valor']+$totales[1]['valor'],
 	       // 'descuento'=>$cliente->,
 	       'base_imponible'=>$totales[3]['valor'],
 	       'iva'=>$totales[3]['valor'],
 	       'total_pagar'=>$totales[3]['valor'],
 	       'estado'=>'A',
-	       'tipo_save_fac'=>$cliente->tipo_save_fac
-    	 ]
-    	);
+	       'tipo_save_fac'=>$cliente['tipo_save_fac']
+    	 ]);
 
-    return response()->json(['respuesta' => $this->user], 200);
+    $last_fac=DB::table('facturacion_proformas.factura_venta')->where('id',$id_fac)->first();
+
+    foreach ($detalles as $key => $value) {
+
+    	DB::table('facturacion_proformas.detalle_factura_venta')->insert([
+    		'id_factura_venta'=>$last_fac->id,
+    		'codigo_prod'=>$value['codigo_prod'],
+    		'descripcion'=>$value['nombre_corto'],
+    		'cantidad'=>$value['cantidad_fac'],
+    		'valor_unitario'=>$value['precio'],
+	        'total_venta'=>$value['total_fac'],
+	        'estado'=>'A',
+    		]);
+    }
+    $empresa=['ruc_ci'=>'XXXXXXX RUC','nombre'=>'ABCD','direccion'=>'direccion-----------'];
+    $generacion=$this->generar_pdf($cliente,$detalles,$totales,$last_fac,$empresa);
+        
+
+    return response()->json(['respuesta' =>true,'fac'=>$generacion], 200);
+    }
+
+
+    public function generar_pdf($cliente,$detalles,$totales,$last_fac,$empresa) 
+    {
+        $iddocumento=$last_fac->id;
+        $factura=$last_fac;
+        $datos=['factura'=>$last_fac,'cliente'=>$cliente,'detalles'=>$detalles,'totales'=>$totales,'empresa'=>$empresa];
+
+// foreach ($datos['totales'] as $value) {
+//     return $value['valor'];
+// }
+
+       
+
+        if (!File::exists($this->pathLocal.'/facturas/'.$iddocumento.'.pdf'))
+        {
+        $data = $datos;
+        $date = date('Y-m-d');
+        $invoice = "2222";
+        $view =  \View::make('invoice', compact('data', 'date', 'invoice'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        $pdf->save(public_path().'/facturas/'.$iddocumento.'.pdf');
+        }
+        return config('global.dir_server').'/public/facturas/'.$iddocumento.'.pdf';
     }
 
     public function Get_Facturas(Request $request)

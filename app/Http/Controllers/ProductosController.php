@@ -56,8 +56,14 @@ class ProductosController extends Controller
         'codigo_baras'=>$request->nombre_corto,
         'tipo_consumo'=>$request->tipo_gasto,
         'id_descripcion'=>$datos_descripcion_prod->id,
-        'estado'=>'A'
+        'estado'=>'A',
+        'codigo_prod'=>'',
+        'stock_minimo'=>$request->stock_minimo
         ]);
+
+    $last_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();
+
+    DB::table('inventario.productos')->update(['codigo_prod'=>$last_prod->categoria.$last_prod->marca.$last_prod->modelo.$last_prod->id]);
     $datos_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();
 
     //Guardar Imagen
@@ -97,9 +103,9 @@ class ProductosController extends Controller
         $data=DB::table('inventario.productos')
                                                 ->where('nombre_corto','LIKE','%'.$request->input('filter').'%')
                                                 //->orwhere('descripcion','LIKE','%'.$request->input('filter').'%')
-                                                ->orderBy('nombre_corto','ASC')->get();
+                                                ->where('estado','A')->orderBy('nombre_corto','ASC')->get();
     }else{
-        $data=DB::table('inventario.productos')->orderBy('nombre_corto','ASC')->get();
+        $data=DB::table('inventario.productos')->where('estado','A')->orderBy('nombre_corto','ASC')->get();
     }
 
     foreach ($data as $key => $value) {
@@ -111,7 +117,8 @@ class ProductosController extends Controller
         $value->marca=$data_categoria->nombre;
         //selecionar Modelo
         $data_categoria=DB::table('inventario.modelos')->select('nombre')->where('id',$value->modelo)->first();
-        $value->modelo=$data_categoria->nombre;
+        $modelo=(count($data_categoria)!=0)?$data_categoria->nombre:'Sin-Modelo';
+        $value->modelo=$modelo;
         //selecionar Descripcion
         $data_categoria=DB::table('inventario.descripcion_producto')->select('descripcion_corta')->where('id',$value->id_descripcion)->first();
         $value->descripcion_corta=$data_categoria->descripcion_corta;
