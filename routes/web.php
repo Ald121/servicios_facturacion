@@ -81,6 +81,12 @@ Route::group(['middleware' => 'cors'], function(){
             Route::post('Update_Facturas','FacturacionController@Update_Facturas');
             Route::post('Delete_Facturas','FacturacionController@Delete_Facturas');
             Route::post('Get_Facturas','FacturacionController@Get_Facturas');
+            //UNIDADES
+            Route::post('Existencia_Unidades','UnidadesController@Existencia_Unidades');
+            Route::post('Add_Unidades','UnidadesController@Add_Unidades');
+            Route::post('Update_Unidades','UnidadesController@Update_Unidades');
+            Route::post('Delete_Unidades','UnidadesController@Delete_Unidades');
+            Route::post('Get_Unidades','UnidadesController@Get_Unidades');
 	
 		});
 });

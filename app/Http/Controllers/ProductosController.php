@@ -58,7 +58,8 @@ class ProductosController extends Controller
         'id_descripcion'=>$datos_descripcion_prod->id,
         'estado'=>'A',
         'codigo_prod'=>'',
-        'stock_minimo'=>$request->stock_minimo
+        'stock_minimo'=>$request->stock_minimo,
+        'unidad'=>$request->unidad
         ]);
 
     $last_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();
@@ -125,8 +126,10 @@ class ProductosController extends Controller
 
         //selecionar IMPUESTOS
         $data_producto_impuesto=DB::table('inventario.productos_impuestos')->select('impuesto')->where('producto',$value->id)->first();
-        //$data_impuesto=DB::table('inventario.impuestos')->select('id')->where('id',$data_producto_impuesto->impuesto)->first();
         $value->impuesto=$data_producto_impuesto->impuesto;
+        //selecionar UNIDAD
+        $data_producto_unidad=DB::table('inventario.unidades')->select('nombre')->where('id',$value->unidad)->first();
+        $value->unidad=$data_producto_unidad->nombre;
     }
 
     $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
