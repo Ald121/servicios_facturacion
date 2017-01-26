@@ -128,8 +128,8 @@ class ProductosController extends Controller
         $data_producto_impuesto=DB::table('inventario.productos_impuestos')->select('impuesto')->where('producto',$value->id)->first();
         $value->impuesto=$data_producto_impuesto->impuesto;
         //selecionar UNIDAD
-        $data_producto_unidad=DB::table('inventario.unidades')->select('nombre')->where('id',$value->unidad)->first();
-        $value->unidad=$data_producto_unidad->nombre;
+        $data_producto_unidad=DB::table('inventario.unidades')->select('nombre','abreviatura')->where('id',$value->unidad)->first();
+        $value->unidad=$data_producto_unidad;
     }
 
     $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
