@@ -59,7 +59,8 @@ class ProductosController extends Controller
         'estado'=>'A',
         'codigo_prod'=>'',
         'stock_minimo'=>$request->stock_minimo,
-        'unidad'=>$request->unidad
+        'unidad'=>$request->unidad,
+        'id_proveedor'=>$request->proveedor
         ]);
 
     $last_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();

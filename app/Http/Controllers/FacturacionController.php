@@ -59,7 +59,7 @@ class FacturacionController extends Controller
 	       // 'descuento'=>$cliente->,
 	       'base_imponible'=>$totales[3]['valor'],
 	       'iva'=>$totales[3]['valor'],
-	       'total_pagar'=>$totales[3]['valor'],
+	       'total_pagar'=>$totales[5]['valor'],
 	       'estado'=>'A',
 	       'tipo_save_fac'=>$cliente['tipo_save_fac']
     	 ]);
@@ -118,18 +118,26 @@ class FacturacionController extends Controller
 
     if ($request->has('filter')&&$request->filter!='') {
         $data=DB::table('facturacion_proformas.factura_venta')
-                                                ->where('nombre','LIKE','%'.$request->input('filter').'%')
-                                                ->where('estado','A')->orderBy('nombre','ASC')->get();
+                                                ->where('serie','LIKE','%'.$request->input('filter').'%')
+                                                ->where('estado','A')->where('tipo_save_fac',TRUE)->orderBy('id','DESC')->get();
     }else{
-        $data=DB::table('facturacion_proformas.factura_venta')->where('estado','A')->orderBy('nombre','ASC')->get();
+        $data=DB::table('facturacion_proformas.factura_venta')->where('estado','A')->where('tipo_save_fac',TRUE)->orderBy('id','DESC')->get();
     }
+
+    foreach ($data as $key => $value) {
+        $data_cliente=DB::table('facturacion_proformas.clientes')->where('estado','A')->where('id',(integer)$value->id_cliente)->first();
+        if (count($data_cliente)>0) {
+            $value->cliente=$data_cliente;
+        }
+    }
+
     $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
     return response()->json(['respuesta' => $data], 200);
     }
 
     public function Update_Facturas(Request $request)
     {
-    $data=DB::table('facturacion_proformas.factura_venta')->where('id',$request->id)->update(['nombre' => $request->nombre , 'descripcion' => $request->descripcion]);
+    $data=DB::table('facturacion_proformas.factura_venta')->where('id',$request->id)->update(['tipo_save_fac' => FALSE ]);
     return response()->json(['respuesta' => true], 200);
     }
 

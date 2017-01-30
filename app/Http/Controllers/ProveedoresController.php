@@ -23,7 +23,7 @@ class ProveedoresController extends Controller
 
     public function Existencia_Proveedores(Request $request)
     {
-    $datos=DB::table('inventario.productos')->where('ruc',$request->nombre)->first();
+    $datos=DB::table('inventario.proveedores')->where('ruc',$request->nombre)->first();
         if (count($datos)==0) {
             return response()->json(['respuesta' => true], 200);
         }else{
@@ -93,5 +93,14 @@ class ProveedoresController extends Controller
     {
     $data=DB::table('inventario.proveedores')->where('id',$request->id)->update(['estado'=>'I']);
     return response()->json(['respuesta' => true], 200);
+    }
+
+    public function Get_Proveedor_By_Ruc(Request $request)
+    {
+    $data=DB::table('inventario.proveedores')->where('ruc',$request->ruc)->first();
+    if (count($data)>0) {
+        return response()->json(['respuesta' => true,'proveedor'=>$data], 200);
+    }else return response()->json(['respuesta' => false], 200);
+    
     }
 }
