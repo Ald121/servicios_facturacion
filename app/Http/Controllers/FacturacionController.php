@@ -16,7 +16,8 @@ use Storage;
 class FacturacionController extends Controller
 {
      public function __construct(Request $request){
-        // Funciones
+        try {
+                    // Funciones
         $this->funciones=new Funciones();
         //Autenticacion
         $key=config('jwt.secret');
@@ -24,6 +25,11 @@ class FacturacionController extends Controller
         $this->user=$decoded;
         //Paths
         $this->pathLocal  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix();
+        }
+        catch (\Firebase\JWT\ExpiredException $e) {
+        return response()->json(['respuesta' => $e->getMessage()]);
+        die();
+        }
     }
 
     public function Existencia_Facturas(Request $request)
@@ -54,7 +60,7 @@ class FacturacionController extends Controller
     	   'id_cliente'=>$id_cliente,
     	   'id_usuario'=>$this->user->id,
     	   // 'forma_pago'=>$cliente->,
-    	   'serie'=>$serie,
+    	   'serie'=>'001-001-'.$serie,
 	       'subtotal'=>$totales[0]['valor']+$totales[1]['valor'],
 	       // 'descuento'=>$cliente->,
 	       'base_imponible'=>$totales[3]['valor'],

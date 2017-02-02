@@ -15,12 +15,18 @@ use File;
 class ProductosController extends Controller
 {
     public function __construct(Request $request){
-        // Funciones
-        $this->funciones=new Funciones();
-        //Autenticacion
-        $key=config('jwt.secret');
-        $decoded = JWT::decode($request->token, $key, array('HS256'));
-        $this->user=$decoded;
+        try {
+            // Funciones
+            $this->funciones=new Funciones();
+            //Autenticacion
+            $key=config('jwt.secret');
+            $decoded = JWT::decode($request->token, $key, array('HS256'));
+            $this->user=$decoded;
+        }
+        catch (\Firebase\JWT\ExpiredException $e) {
+        return response()->json(['respuesta' => $e->getMessage()]);
+        die();
+        }
     }
 
     public function Existencia_Productos(Request $request)
@@ -104,7 +110,7 @@ class ProductosController extends Controller
     if ($request->has('filter')&&$request->filter!='') {
         $data=DB::table('inventario.productos')
                                                 ->where('nombre_corto','LIKE','%'.$request->input('filter').'%')
-                                                //->orwhere('descripcion','LIKE','%'.$request->input('filter').'%')
+                                                ->orwhere('codigo_prod','LIKE','%'.$request->input('filter').'%')
                                                 ->where('estado','A')->orderBy('nombre_corto','ASC')->get();
     }else{
         $data=DB::table('inventario.productos')->where('estado','A')->orderBy('nombre_corto','ASC')->get();
@@ -135,6 +141,46 @@ class ProductosController extends Controller
 
     $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
     return response()->json(['respuesta' => $data], 200);
+    }
+
+    public function Get_Productos_Agotados(Request $request)
+    {
+
+        $data=DB::table('inventario.productos')->orderBy('cantidad','ASC')->get();
+        $productos_agotados=[];
+        $a=0;
+    
+    foreach ($data as $key => $value) {
+
+        if ($value->cantidad<=$value->stock_minimo) {
+            //selecionar Categoria
+            $data_categoria=DB::table('inventario.categorias')->select('nombre')->where('id',$value->categoria)->first();
+            $value->categoria=$data_categoria->nombre;
+            //selecionar Marca
+            $data_categoria=DB::table('inventario.marcas')->select('nombre')->where('id',$value->marca)->first();
+            $value->marca=$data_categoria->nombre;
+            //selecionar Modelo
+            $data_categoria=DB::table('inventario.modelos')->select('nombre')->where('id',$value->modelo)->first();
+            $modelo=(count($data_categoria)!=0)?$data_categoria->nombre:'Sin-Modelo';
+            $value->modelo=$modelo;
+            //selecionar Descripcion
+            $data_categoria=DB::table('inventario.descripcion_producto')->select('descripcion_corta')->where('id',$value->id_descripcion)->first();
+            $value->descripcion_corta=$data_categoria->descripcion_corta;
+            //selecionar IMPUESTOS
+            $data_producto_impuesto=DB::table('inventario.productos_impuestos')->select('impuesto')->where('producto',$value->id)->first();
+            $value->impuesto=$data_producto_impuesto->impuesto;
+            //selecionar UNIDAD
+            $data_producto_unidad=DB::table('inventario.unidades')->select('nombre','abreviatura')->where('id',$value->unidad)->first();
+            $value->unidad=$data_producto_unidad;
+            //selecionar IMAGEN
+            $data_producto_imagen=DB::table('inventario.imagenes_productos')->select('direccion','nombre')->where('producto',$value->id)->first();
+            $value->image=config('global.dir_server').$data_producto_imagen->direccion.$data_producto_imagen->nombre;
+            $productos_agotados[$a]=$value;
+            $a++;
+        }
+    }
+
+    return response()->json(['respuesta' => $productos_agotados], 200);
     }
 
     public function Update_Productos(Request $request)

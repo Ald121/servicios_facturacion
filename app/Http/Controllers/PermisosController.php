@@ -13,12 +13,18 @@ use \Firebase\JWT\JWT;
 class PermisosController extends Controller
 {
     public function __construct(Request $request){
-        // Funciones
-        $this->funciones=new Funciones();
-        //Autenticacion
-        $key=config('jwt.secret');
-        $decoded = JWT::decode($request->token, $key, array('HS256'));
-        $this->user=$decoded;
+        try {
+            // Funciones
+            $this->funciones=new Funciones();
+            //Autenticacion
+            $key=config('jwt.secret');
+            $decoded = JWT::decode($request->token, $key, array('HS256'));
+            $this->user=$decoded;
+        }
+        catch (\Firebase\JWT\ExpiredException $e) {
+        return response()->json(['respuesta' => $e->getMessage()]);
+        die();
+        }
     }
 
     public function Get_Permisos(Request $request)
@@ -73,7 +79,7 @@ class PermisosController extends Controller
     public function Gen_Permisos_Admin(Request $request){
     	
     	$menu_inicio=[
-			['label'=>'INVENTARIO','icon'=>'/images/modulos/inventario.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-archive','color'=>'tc-indigo-900','children'=>
+			['label'=>'INVENTARIO','icon'=>'images/modulos/inventario.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-archive','color'=>'tc-indigo-900','children'=>
 				[
 					// ['label'=>'Tipos de Consumo','path'=>'Dash/Inventario/Tipo-Consumo'],
 					['label'=>'Categorias','path'=>'Dash/Inventario/Categorias','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-format-list-bulleted-type','color'=>'tc-indigo-900','children'=>[]],
@@ -83,21 +89,26 @@ class PermisosController extends Controller
 					['label'=>'Productos','path'=>'Dash/Inventario/Productos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-dropbox','color'=>'tc-indigo-900','children'=>[]]
 				]
 			],
-			['label'=>'FACTURACIÓN','icon'=>'/images/modulos/facturacion.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>
+			['label'=>'FACTURACIÓN','icon'=>'images/modulos/facturacion.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>
 				[
 					['label'=>'Vender','path'=>'Dash/Facturacion/Vender','icon'=>'mdi-cart','color'=>'tc-orange-500','iconmdi'=>'mdi-cart','color'=>'tc-orange-500','children'=>[]],
 					['label'=>'Clientes','path'=>'Dash/Facturacion/Clientes','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-account-multiple','color'=>'tc-indigo-900','children'=>[]],
 					['label'=>'Mis Facturas','path'=>'Dash/Facturacion/MisFacturas','icon'=>'mdi-file','color'=>'tc-indigo-900','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>[]]
 				]
 			],
-			['label'=>'PROFORMAS','icon'=>'/images/modulos/proformas.png','path'=>'Dash/Proformas','iconmdi'=>'mdi-file-document-box','color'=>'tc-indigo-900','children'=>[]],
-			['label'=>'CONFIGURACIÓN','icon'=>'/images/modulos/config.png','path'=>'Dash/Configuracion','iconmdi'=>'mdi-settings','color'=>'tc-indigo-900','children'=>
+			['label'=>'PROFORMAS','icon'=>'images/modulos/proformas.png','path'=>'Dash/Proformas','iconmdi'=>'mdi-file-document-box','color'=>'tc-indigo-900','children'=>
+                [
+                    ['label'=>'Nueva Proforma','path'=>'Dash/Proformas/Add','icon'=>'mdi-cart','iconmdi'=>'mdi-file-powerpoint','color'=>'tc-green-500','children'=>[]],
+                    ['label'=>'Mis Proformas','path'=>'Dash/Proformas/MisProformas','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-file-document-box','color'=>'tc-indigo-900','children'=>[]]
+                ]
+            ],
+			['label'=>'CONFIGURACIÓN','icon'=>'images/modulos/config.png','path'=>'Dash/Configuracion','iconmdi'=>'mdi-settings','color'=>'tc-indigo-900','children'=>
 			[
 				// {'label'=>'Usuarios','path'=>'Dash/Inventario/Usuarios'],
 				// {'label'=>'Tipos de Usuario','path'=>'Dash/Inventario/Tipos-Usuario']
 			]]
 								];
-								DB::table('usuarios.menu_inicio')->delete();
+	DB::table('usuarios.menu_inicio')->delete();
 		//DASH
         foreach ($menu_inicio as $key => $value) {
     DB::table('usuarios.menu_inicio')

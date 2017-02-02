@@ -15,12 +15,18 @@ use File;
 class ImpuestosController extends Controller
 {
     public function __construct(Request $request){
-        // Funciones
-        $this->funciones=new Funciones();
-        //Autenticacion
-        $key=config('jwt.secret');
-        $decoded = JWT::decode($request->token, $key, array('HS256'));
-        $this->user=$decoded;
+        try {
+            // Funciones
+            $this->funciones=new Funciones();
+            //Autenticacion
+            $key=config('jwt.secret');
+            $decoded = JWT::decode($request->token, $key, array('HS256'));
+            $this->user=$decoded;
+        }
+        catch (\Firebase\JWT\ExpiredException $e) {
+        return response()->json(['respuesta' => $e->getMessage()]);
+        die();
+        }
     }
 
     public function Existencia_Impuestos(Request $request)

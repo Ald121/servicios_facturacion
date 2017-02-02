@@ -26,6 +26,7 @@ Route::group(['middleware' => 'cors'], function(){
             //Permisos
             Route::post('Get_Permisos','PermisosController@Get_Permisos');
             Route::post('Gen_Permisos_Admin','PermisosController@Gen_Permisos_Admin');
+            Route::post('Session_Status','sesionController@Session_Status');
         	//Categorias 
         	Route::post('Existencia_Categorias','categoriasController@Existencia_Categorias');
             Route::post('Add_Categorias','categoriasController@Add_Categoria');
@@ -50,6 +51,7 @@ Route::group(['middleware' => 'cors'], function(){
         	Route::post('Update_Productos','ProductosController@Update_Productos');
         	Route::post('Delete_Productos','ProductosController@Delete_Productos');
         	Route::post('Get_Productos','ProductosController@Get_Productos');
+            Route::post('Get_Productos_Agotados','ProductosController@Get_Productos_Agotados');
         	//Proveedores 
         	Route::post('Existencia_Proveedores','ProveedoresController@Existencia_Proveedores');
             Route::post('Add_Proveedores','ProveedoresController@Add_Proveedores');
