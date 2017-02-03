@@ -90,6 +90,17 @@ Route::group(['middleware' => 'cors'], function(){
             Route::post('Update_Unidades','UnidadesController@Update_Unidades');
             Route::post('Delete_Unidades','UnidadesController@Delete_Unidades');
             Route::post('Get_Unidades','UnidadesController@Get_Unidades');
+            //PROFORMAS
+            Route::post('Existencia_Proformas','ProformasController@Existencia_Proformas');
+            Route::post('Add_Proformas','ProformasController@Add_Proformas');
+            Route::post('Update_Proformas','ProformasController@Update_Proformas');
+            Route::post('Delete_Proformas','ProformasController@Delete_Proformas');
+            Route::post('Get_Proformas','ProformasController@Get_Proformas');
+            Route::post('Facturar_Proformas','ProformasController@Facturar_Proformas');
+            //INFORMACION DE EMPRESA
+            Route::post('Add_Informacion','InfoEmpresaController@Add_Informacion');
+            Route::post('Update_Informacion','InfoEmpresaController@Update_Informacion');
+            Route::post('Get_Informacion','InfoEmpresaController@Get_Informacion');
 	
 		});
 });

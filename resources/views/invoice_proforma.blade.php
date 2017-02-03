@@ -12,7 +12,7 @@
 
   <div id="container">
         <div class="left">
-        <p>FACTURA No. {{$data['factura']->serie}}</p>
+        <p>PROFORMA No. {{$data['factura']->serie}}</p>
         <p>{{$data['empresa']['nombre']}}</p>
         <p>RUC: {{$data['empresa']['ruc_ci']}}</p>
         <p>Dir Matriz: {{$data['empresa']['direccion']}}</p>
@@ -22,7 +22,7 @@
         <p>Razón Social / Nombres y Apellidos: {{$data['cliente']['nombres']}}</p>
         <p>FECHA Y HORA DE EMISION: {{$data['factura']->fecha_creacion}}</p>
       </div>
-  </div> 
+  </div>
   <br><br><br><br><br><br><br><br><br><br>
 <h1>Detalles</h1>
       <table border="0" cellspacing="0" cellpadding="0" id="tabla_detalles">

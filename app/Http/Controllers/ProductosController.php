@@ -50,6 +50,7 @@ class ProductosController extends Controller
     'descripcion_proformas'=>$request->descripcion_proformas
     ]);
     $datos_descripcion_prod=DB::table('inventario.descripcion_producto')->where('descripcion_corta',$request->descripcion_corta)->first();
+
         //Guardar Producto
     DB::table('inventario.productos')->insert([
         'nombre_corto'=>$request->nombre_corto,
@@ -71,9 +72,8 @@ class ProductosController extends Controller
 
     $last_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();
 
-    DB::table('inventario.productos')->update(['codigo_prod'=>$last_prod->categoria.$last_prod->marca.$last_prod->modelo.$last_prod->id]);
+    DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->update(['codigo_prod'=>$last_prod->categoria.$last_prod->marca.$last_prod->modelo.$last_prod->id]);
     $datos_prod=DB::table('inventario.productos')->where('nombre_corto',$request->nombre_corto)->first();
-
     //Guardar Imagen
     $img=$request->file('file');
     $extension=$img->getClientOriginalExtension();

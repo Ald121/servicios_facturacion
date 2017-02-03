@@ -50,8 +50,8 @@ class FacturacionController extends Controller
     	$id_fac=$this->funciones->generarID();
 
     	$id_cliente=($cliente['telefono']=="999999")?"":$cliente['id'];
-    	$datos_serie=DB::table('facturacion_proformas.factura_venta')->select('serie')->orderBy('id','DESC')->first();
-    	$serie=(count($datos_serie)>0)? str_pad((integer)$datos_serie->serie+1, 8, '0', STR_PAD_LEFT): str_pad(1, 8, '0', STR_PAD_LEFT);
+    	$datos_serie=DB::table('facturacion_proformas.factura_venta')->select('serie')->where('tipo_registro','FAC')->orderBy('id','DESC')->first();
+    	$serie=(count($datos_serie)>0)? str_pad((integer)explode('-', $datos_serie->serie)[2]+1, 8, '0', STR_PAD_LEFT): str_pad(1, 8, '0', STR_PAD_LEFT);
     	
 
     DB::table('facturacion_proformas.factura_venta')->insert(
@@ -67,7 +67,8 @@ class FacturacionController extends Controller
 	       'iva'=>$totales[3]['valor'],
 	       'total_pagar'=>$totales[5]['valor'],
 	       'estado'=>'A',
-	       'tipo_save_fac'=>$cliente['tipo_save_fac']
+	       'tipo_save_fac'=>$cliente['tipo_save_fac'],
+           'tipo_registro'=>$cliente['tipo_registro']
     	 ]);
 
     $last_fac=DB::table('facturacion_proformas.factura_venta')->where('id',$id_fac)->first();
@@ -98,11 +99,9 @@ class FacturacionController extends Controller
         $factura=$last_fac;
         $datos=['factura'=>$last_fac,'cliente'=>$cliente,'detalles'=>$detalles,'totales'=>$totales,'empresa'=>$empresa];
 
-// foreach ($datos['totales'] as $value) {
-//     return $value['valor'];
-// }
-
-       
+        // foreach ($datos['totales'] as $value) {
+        //     return $value['valor'];
+        // }
 
         if (!File::exists($this->pathLocal.'/facturas/'.$iddocumento.'.pdf'))
         {
@@ -125,9 +124,9 @@ class FacturacionController extends Controller
     if ($request->has('filter')&&$request->filter!='') {
         $data=DB::table('facturacion_proformas.factura_venta')
                                                 ->where('serie','LIKE','%'.$request->input('filter').'%')
-                                                ->where('estado','A')->where('tipo_save_fac',TRUE)->orderBy('id','DESC')->get();
+                                                ->where('estado','A')->where('tipo_save_fac',TRUE)->where('tipo_registro','FAC')->orderBy('id','DESC')->get();
     }else{
-        $data=DB::table('facturacion_proformas.factura_venta')->where('estado','A')->where('tipo_save_fac',TRUE)->orderBy('id','DESC')->get();
+        $data=DB::table('facturacion_proformas.factura_venta')->where('estado','A')->where('tipo_registro','FAC')->where('tipo_save_fac',TRUE)->orderBy('id','DESC')->get();
     }
 
     foreach ($data as $key => $value) {
