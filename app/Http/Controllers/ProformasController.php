@@ -87,7 +87,8 @@ class ProformasController extends Controller
 	        'estado'=>'A',
     		]);
     }
-    $empresa=['ruc_ci'=>'XXXXXXX RUC','nombre'=>'ABCD','direccion'=>'direccion-----------'];
+    $empresa_data=DB::table('public.datos_empresa')->first();
+    $empresa=['ruc_ci'=>$empresa_data->ruc,'nombre'=>$empresa_data->nombre,'direccion'=>$empresa_data->direccion];
     $generacion=$this->generar_pdf($cliente,$detalles,$totales,$last_fac,$empresa);
         
 

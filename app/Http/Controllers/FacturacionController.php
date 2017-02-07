@@ -17,7 +17,7 @@ class FacturacionController extends Controller
 {
      public function __construct(Request $request){
         try {
-                    // Funciones
+        // Funciones
         $this->funciones=new Funciones();
         //Autenticacion
         $key=config('jwt.secret');
@@ -74,6 +74,10 @@ class FacturacionController extends Controller
     $last_fac=DB::table('facturacion_proformas.factura_venta')->where('id',$id_fac)->first();
 
     foreach ($detalles as $key => $value) {
+        //Disminuir el STOCK
+        $producto=DB::table('inventario.productos')->select('cantidad')->where('codigo_prod',$value['codigo_prod'])->first();
+        $resta=$producto->cantidad-$value['cantidad_fac'];
+        DB::table('inventario.productos')->where('codigo_prod',$value['codigo_prod'])->update(['cantidad'=>$resta]);
 
     	DB::table('facturacion_proformas.detalle_factura_venta')->insert([
     		'id_factura_venta'=>$last_fac->id,
@@ -85,7 +89,8 @@ class FacturacionController extends Controller
 	        'estado'=>'A',
     		]);
     }
-    $empresa=['ruc_ci'=>'XXXXXXX RUC','nombre'=>'ABCD','direccion'=>'direccion-----------'];
+    $empresa_data=DB::table('public.datos_empresa')->first();
+    $empresa=['ruc_ci'=>$empresa_data->ruc,'nombre'=>$empresa_data->nombre,'direccion'=>$empresa_data->direccion];
     $generacion=$this->generar_pdf($cliente,$detalles,$totales,$last_fac,$empresa);
         
 

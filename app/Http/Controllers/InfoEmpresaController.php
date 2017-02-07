@@ -33,19 +33,8 @@ class InfoEmpresaController extends Controller
     {
     	$empresa=DB::table('public.datos_empresa')->first();
     if (count($empresa)==0) {
-    	DB::table('public.datos_empresa')->insert([
-    	'id'=>$this->funciones->generarID(),
-    	'nombre'=>$request->nombre,
-    	'ruc'=>$request->ruc,
-    	'imagen'=>$request->imagen,
-    	'direccion'=>$request->direccion,
-    	'telefono'=>$request->telefono,
-    	'celular'=>$request->celular,
-    	'correo'=>$request->correo
-    	]);
-
-    	//Guardar Imagen
-	    $img=$request->file('file');
+    	    	//Guardar Imagen
+	    $img=$request->file('files')[0];
 	    $extension=$img->getClientOriginalExtension();
 	    $path=public_path().'/empresa/';
 	    $nombre_img=$request->ruc.".".$extension;
@@ -53,12 +42,32 @@ class InfoEmpresaController extends Controller
 	     // Mover Archivo
 	    File::move(public_path().'/'.$nombre_img,$path.$nombre_img);
 
+    	DB::table('public.datos_empresa')->insert([
+    	'id'=>$this->funciones->generarID(),
+    	'nombre'=>$request->nombre,
+    	'ruc'=>$request->ruc,
+    	'imagen'=>'empresa/'.$nombre_img,
+    	'direccion'=>$request->direccion,
+    	'telefono'=>$request->telefono,
+    	'celular'=>$request->celular,
+    	'correo'=>$request->correo
+    	]);
+
     }else{
+    	//Guardar Imagen
+	    $img=$request->file('files')[0];
+	    $extension=$img->getClientOriginalExtension();
+	    $path=public_path().'/empresa/';
+	    $nombre_img=$request->ruc.".".$extension;
+	    Image::make($img->getRealPath())->save($nombre_img);
+	     // Mover Archivo
+	    File::move(public_path().'/'.$nombre_img,$path.$nombre_img);
+
     	DB::table('public.datos_empresa')->where('id',$empresa->id)->update([
     	'id'=>$request->nombre,
     	'nombre'=>$request->nombre,
     	'ruc'=>$request->ruc,
-    	'imagen'=>$request->imagen,
+    	'imagen'=>'empresa/'.$nombre_img,
     	'direccion'=>$request->direccion,
     	'telefono'=>$request->telefono,
     	'celular'=>$request->celular,
@@ -72,7 +81,10 @@ class InfoEmpresaController extends Controller
     public function Get_Informacion(Request $request)
     {
     $data=DB::table('public.datos_empresa')->first();
-    return response()->json(['respuesta' => $data], 200);
+    if (count($data)>0) {
+    	return response()->json(['respuesta' => $data], 200);
+    }else return response()->json(['respuesta' => false], 200);
+    
     }
 
     public function Update_Informacion(Request $request)

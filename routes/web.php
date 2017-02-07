@@ -18,8 +18,11 @@ Route::get('/', function () {
 Route::group(['middleware' => 'cors'], function(){
 	Route::post('Acceso','loginController@Acceso');
     Route::post('Get_Localizacion','localizacionController@Get_Localizacion');
-                //Sesion
-            Route::post('Salir','loginController@Salir');
+    //Sesion
+    Route::post('Salir','loginController@Salir');
+    //LICENCIA
+    Route::post('Gen_Licencia','LicenciaController@Gen_Licencia');
+    Route::post('Get_Licencia','LicenciaController@Get_Licencia');
 
 	Route::group(['middleware' => ['jwt.auth']], function ()
         {
