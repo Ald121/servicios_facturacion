@@ -16,8 +16,12 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'cors'], function(){
-	Route::post('Acceso','loginController@Acceso');
+    Route::group(['middleware' => ['licencia.softics']], function ()
+    {
+	   Route::post('Acceso','loginController@Acceso');
+    });
     Route::post('Get_Localizacion','localizacionController@Get_Localizacion');
+    Route::post('Gen_Permisos_Admin','PermisosController@Gen_Permisos_Admin');
     //Sesion
     Route::post('Salir','loginController@Salir');
     //LICENCIA
@@ -26,9 +30,9 @@ Route::group(['middleware' => 'cors'], function(){
 
 	Route::group(['middleware' => ['jwt.auth']], function ()
         {
+
             //Permisos
             Route::post('Get_Permisos','PermisosController@Get_Permisos');
-            Route::post('Gen_Permisos_Admin','PermisosController@Gen_Permisos_Admin');
             Route::post('Session_Status','sesionController@Session_Status');
         	//Categorias 
         	Route::post('Existencia_Categorias','categoriasController@Existencia_Categorias');
@@ -104,6 +108,10 @@ Route::group(['middleware' => 'cors'], function(){
             Route::post('Add_Informacion','InfoEmpresaController@Add_Informacion');
             Route::post('Update_Informacion','InfoEmpresaController@Update_Informacion');
             Route::post('Get_Informacion','InfoEmpresaController@Get_Informacion');
-	
+            //MOVIMIENTOS
+            Route::post('Add_Movimientos','MovimientosController@Add_Movimientos');
+            Route::post('Update_Movimientos','MovimientosController@Update_Movimientos');
+            Route::post('Get_Movimientos','MovimientosController@Get_Movimientos');
+
 		});
 });

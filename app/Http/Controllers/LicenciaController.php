@@ -27,28 +27,49 @@ class LicenciaController extends Controller
     {
 
 	   $id=$this->funciones->generarID();
-	   $datos = DB::table('usuarios.usuarios')->select('id','nick')->where('nick','admin')->first();
-	   $extra=['fecha_inicio'=>Carbon::now()->toDateTimeString(),'fecha_fin'=>Carbon::now()->addDays(1)->toDateTimeString(),'key'=>$id];
-       $token = JWTAuth::fromUser($datos,$extra);
+
        $licencia = DB::table('system.licencia')->first();
        if (count($licencia)==0) {
-       	$datos = DB::table('system.licencia')->insert(['id'=>$id,'key'=>$token,'estado'=>'A']);
+
+          $key = config('jwt.secret');
+          $token = array(
+              'exp'=>strtotime(Carbon::now()->addYears(1)->toDateTimeString()),
+              'fecha_fin'=>Carbon::now()->addYears(1)->toDateTimeString(),
+              'fecha_inicio'=>Carbon::now()->toDateTimeString(),
+              'iss'=>config('global.dir_server')."/public/Get_Licencia",
+              'jti'=>"aeceba384cf7dc5c12c2279f076a1b59",
+              'key'=>$id,
+              'sub'=>"1"
+          );
+          $jwt = JWT::encode($token, $key);
+
+       	$datos = DB::table('system.licencia')->insert(['id'=>$id,'key'=>$jwt,'estado'=>'A','fecha_fin'=>Carbon::now()->addYears(1)->toDateTimeString()]);
        }
        
-	  return response()->json(['respuesta' =>  $extra], 200);
+	  return response()->json(['respuesta' =>  true], 200);
 	    
     }
 
     public function Get_Licencia(Request $request)
     {
 
-       $licencia = DB::table('system.licencia')->first();
-        //Autenticacion
+       try {
+            $licencia = DB::table('system.licencia')->first();
+              //Autenticacion
             $key=config('jwt.secret');
             $decoded = JWT::decode($licencia->key, $key, array('HS256'));
             $data_licencia=$decoded;
+
+            $created = new Carbon($data_licencia->fecha_fin);
+            $now = Carbon::now();
+            $dias_restantes = $created->diff($now)->days;
        
-	  return response()->json(['respuesta' =>  $data_licencia], 200);
+            return response()->json(['respuesta' => true,'dias_restantes'=>$dias_restantes], 200);
+        }
+        catch (\Firebase\JWT\ExpiredException $e) {
+            return response()->json(['respuesta' => $e->getMessage()],401);
+            die();
+        }
 	    
     }
 }

@@ -86,7 +86,8 @@ class PermisosController extends Controller
 					['label'=>'Marcas','path'=>'Dash/Inventario/Marcas','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-animation','color'=>'tc-indigo-900','children'=>[]],
 					['label'=>'Modelos','path'=>'Dash/Inventario/Modelos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-bandcamp','color'=>'tc-indigo-900','children'=>[]],
 					['label'=>'Proveedores','path'=>'Dash/Inventario/Proveedores','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-clipboard-account','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Productos','path'=>'Dash/Inventario/Productos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-dropbox','color'=>'tc-indigo-900','children'=>[]]
+					['label'=>'Productos','path'=>'Dash/Inventario/Productos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-dropbox','color'=>'tc-indigo-900','children'=>[]],
+                    ['label'=>'Ingreso de Mercaderia','path'=>'Dash/Inventario/IngresoMercaderia','icon'=>'mdi-package-down','color'=>'tc-indigo-900','iconmdi'=>'mdi-package-down','color'=>'tc-indigo-900','children'=>[]]
 				]
 			],
 			['label'=>'FACTURACIÓN','icon'=>'images/modulos/facturacion.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>
