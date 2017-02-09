@@ -39,15 +39,15 @@ class MovimientosController extends Controller
 
   public function Add_Movimientos(Request $request)
     {
-    DB::table('inventario.movimientos_mercaderia')->insert(
-    	[
-    		'tipo_movimiento'=>$request->tipo_movimiento,
-    		'total_movimiento'=>$request->total_movimiento,
-    		'id_proveedor'=>$request->id_proveedor,
-			'estado'=>'A',
-			'tipo_documento'=>$request->tipo_documento
-    	]);
-    return response()->json(['respuesta' => true], 200);
+	    DB::table('inventario.movimientos_mercaderia')->insert(
+	    	[
+	    		'tipo_movimiento'=>$request->tipo_movimiento,
+	    		'total_movimiento'=>$request->total_movimiento,
+	    		'id_proveedor'=>$request->id_proveedor,
+				'estado'=>'A',
+				'tipo_documento'=>$request->tipo_documento
+	    	]);
+	    return response()->json(['respuesta' => true], 200);
     }
 
     public function Get_Movimientos(Request $request)

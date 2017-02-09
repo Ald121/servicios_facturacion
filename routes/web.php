@@ -59,6 +59,7 @@ Route::group(['middleware' => 'cors'], function(){
         	Route::post('Delete_Productos','ProductosController@Delete_Productos');
         	Route::post('Get_Productos','ProductosController@Get_Productos');
             Route::post('Get_Productos_Agotados','ProductosController@Get_Productos_Agotados');
+            Route::post('Get_Productos_By_Proveedor','ProductosController@Get_Productos_By_Proveedor');
         	//Proveedores 
         	Route::post('Existencia_Proveedores','ProveedoresController@Existencia_Proveedores');
             Route::post('Add_Proveedores','ProveedoresController@Add_Proveedores');

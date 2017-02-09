@@ -143,6 +143,54 @@ class ProductosController extends Controller
     return response()->json(['respuesta' => $data], 200);
     }
 
+
+    public function Get_Productos_By_Proveedor(Request $request)
+    {
+    $currentPage = $request->pagina_actual;
+    $limit = $request->limit;
+    $proveedor = $request->proveedor;
+    $data_proveedor=DB::table('inventario.proveedores')->where('estado','A')->where('ruc',$proveedor)->first();
+    if (count($data_proveedor)>0) {
+           $data_proveedor->datos_contacto=json_decode($data_proveedor->datos_contacto);
+    if ($request->has('filter')&&$request->filter!='') {
+        $data=DB::table('inventario.productos')
+                                                ->where('nombre_corto','LIKE','%'.$request->input('filter').'%')
+                                                ->orwhere('codigo_prod','LIKE','%'.$request->input('filter').'%')
+                                                ->where('estado','A')->where('id_proveedor',$proveedor)->orderBy('nombre_corto','ASC')->get();
+    }else{
+        $data=DB::table('inventario.productos')->where('estado','A')->where('id_proveedor',$proveedor)->orderBy('nombre_corto','ASC')->get();
+    }
+
+    foreach ($data as $key => $value) {
+        //selecionar Categoria
+        $data_categoria=DB::table('inventario.categorias')->select('nombre')->where('id',$value->categoria)->first();
+        $value->categoria=$data_categoria->nombre;
+        //selecionar Marca
+        $data_categoria=DB::table('inventario.marcas')->select('nombre')->where('id',$value->marca)->first();
+        $value->marca=$data_categoria->nombre;
+        //selecionar Modelo
+        $data_categoria=DB::table('inventario.modelos')->select('nombre')->where('id',$value->modelo)->first();
+        $modelo=(count($data_categoria)!=0)?$data_categoria->nombre:'Sin-Modelo';
+        $value->modelo=$modelo;
+        //selecionar Descripcion
+        $data_categoria=DB::table('inventario.descripcion_producto')->select('descripcion_corta')->where('id',$value->id_descripcion)->first();
+        $value->descripcion_corta=$data_categoria->descripcion_corta;
+
+        //selecionar IMPUESTOS
+        $data_producto_impuesto=DB::table('inventario.productos_impuestos')->select('impuesto')->where('producto',$value->id)->first();
+        $value->impuesto=$data_producto_impuesto->impuesto;
+        //selecionar UNIDAD
+        $data_producto_unidad=DB::table('inventario.unidades')->select('nombre','abreviatura')->where('id',$value->unidad)->first();
+        $value->unidad=$data_producto_unidad;
+    }
+
+    $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
+    return response()->json(['respuesta' => $data,'proveedor'=>$data_proveedor], 200);
+    }else{
+        return response()->json(['respuesta' =>false], 200);
+    }
+    }
+
     public function Get_Productos_Agotados(Request $request)
     {
 
