@@ -113,6 +113,14 @@ Route::group(['middleware' => 'cors'], function(){
             Route::post('Add_Movimientos','MovimientosController@Add_Movimientos');
             Route::post('Update_Movimientos','MovimientosController@Update_Movimientos');
             Route::post('Get_Movimientos','MovimientosController@Get_Movimientos');
+            Route::post('Delete_Movimientos','MovimientosController@Delete_Movimientos');
+            //TIPOS DE DOCUMENTOS
+            Route::post('Get_Tipo_Documentos','Tipos_DocumentosController@Get_Tipo_Documentos');
+            //Reportes
+            Route::post('Get_Prods_Mas_Vendidos','ReportesController@Get_Prods_Mas_Vendidos');
+            Route::post('Get_Ventas_X_Mes','ReportesController@Get_Ventas_X_Mes');
+            
+            
 
 		});
 });

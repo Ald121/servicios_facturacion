@@ -83,18 +83,18 @@ class PermisosController extends Controller
 				[
 					// ['label'=>'Tipos de Consumo','path'=>'Dash/Inventario/Tipo-Consumo'],
 					['label'=>'Categorias','path'=>'Dash/Inventario/Categorias','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-format-list-bulleted-type','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Marcas','path'=>'Dash/Inventario/Marcas','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-animation','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Modelos','path'=>'Dash/Inventario/Modelos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-bandcamp','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Proveedores','path'=>'Dash/Inventario/Proveedores','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-clipboard-account','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Productos','path'=>'Dash/Inventario/Productos','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-dropbox','color'=>'tc-indigo-900','children'=>[]],
-                    ['label'=>'Ingreso de Mercaderia','path'=>'Dash/Inventario/IngresoMercaderia','icon'=>'mdi-package-down','color'=>'tc-indigo-900','iconmdi'=>'mdi-package-down','color'=>'tc-indigo-900','children'=>[]]
+					['label'=>'Marcas','path'=>'Dash/Inventario/Marcas','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-animation','color'=>'tc-indigo-900','children'=>[]],
+					['label'=>'Modelos','path'=>'Dash/Inventario/Modelos','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-bandcamp','color'=>'tc-indigo-900','children'=>[]],
+					['label'=>'Proveedores','path'=>'Dash/Inventario/Proveedores','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-clipboard-account','color'=>'tc-indigo-900','children'=>[]],
+					['label'=>'Productos','path'=>'Dash/Inventario/Productos','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-barcode','color'=>'tc-indigo-900','children'=>[]],
+                    ['label'=>'Ingreso de Mercaderia','path'=>'Dash/Inventario/IngresoMercaderia','icon'=>'mdi-package-down','iconmdi'=>'mdi-package-down','color'=>'tc-indigo-900','children'=>[]]
 				]
 			],
 			['label'=>'FACTURACIÓN','icon'=>'images/modulos/facturacion.png','path'=>'Dash/Inicio','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>
 				[
-					['label'=>'Vender','path'=>'Dash/Facturacion/Vender','icon'=>'mdi-cart','color'=>'tc-orange-500','iconmdi'=>'mdi-cart','color'=>'tc-orange-500','children'=>[]],
-					['label'=>'Clientes','path'=>'Dash/Facturacion/Clientes','icon'=>'mdi-chevron-double-right','color'=>'tc-indigo-900','iconmdi'=>'mdi-account-multiple','color'=>'tc-indigo-900','children'=>[]],
-					['label'=>'Mis Facturas','path'=>'Dash/Facturacion/MisFacturas','icon'=>'mdi-file','color'=>'tc-indigo-900','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>[]]
+					['label'=>'Vender','path'=>'Dash/Facturacion/Vender','icon'=>'mdi-cart','iconmdi'=>'mdi-cart','color'=>'tc-orange-500','children'=>[]],
+					['label'=>'Clientes','path'=>'Dash/Facturacion/Clientes','icon'=>'mdi-chevron-double-right','iconmdi'=>'mdi-account-multiple','color'=>'tc-indigo-900','children'=>[]],
+					['label'=>'Mis Facturas','path'=>'Dash/Facturacion/MisFacturas','icon'=>'mdi-file','iconmdi'=>'mdi-file-document','color'=>'tc-indigo-900','children'=>[]]
 				]
 			],
 			['label'=>'PROFORMAS','icon'=>'images/modulos/proformas.png','path'=>'Dash/Proformas','iconmdi'=>'mdi-file-document-box','color'=>'tc-indigo-900','children'=>
@@ -107,7 +107,12 @@ class PermisosController extends Controller
 			[
 				// {'label'=>'Usuarios','path'=>'Dash/Inventario/Usuarios'],
 				// {'label'=>'Tipos de Usuario','path'=>'Dash/Inventario/Tipos-Usuario']
-			]]
+			]],
+
+            ['label'=>'REPORTES','icon'=>'images/modulos/reportes.png','path'=>'Dash/Reportes','iconmdi'=>'mdi-chart-line','color'=>'tc-indigo-900','children'=>
+            [
+                ['label'=>'Generar','path'=>'Dash/Reportes/Generar','icon'=>'mdi-calendar-multiple-check','iconmdi'=>'mdi-calendar-multiple-check','color'=>'tc-light-blue-500','children'=>[]]
+            ]]
 								];
 	DB::table('usuarios.menu_inicio')->delete();
 		//DASH

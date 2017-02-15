@@ -39,43 +39,77 @@ class MovimientosController extends Controller
 
   public function Add_Movimientos(Request $request)
     {
-	    DB::table('inventario.movimientos_mercaderia')->insert(
-	    	[
-	    		'tipo_movimiento'=>$request->tipo_movimiento,
-	    		'total_movimiento'=>$request->total_movimiento,
-	    		'id_proveedor'=>$request->id_proveedor,
-				'estado'=>'A',
-				'tipo_documento'=>$request->tipo_documento
-	    	]);
+        $proveedor=$request->proveedor;
+        $detalles=$request->detalles;
+
+        DB::table('inventario.movimientos_mercaderia')->insert(
+            [
+                'tipo_movimiento'=>$proveedor['tipo_movimiento'],
+                'total_movimiento'=>$proveedor['ingreso_total'],
+                'id_proveedor'=>$proveedor['id'],
+                'estado'=>'A',
+                'tipo_documento'=>$proveedor['tipo_documento']
+            ]);
+        $last_movimiento=DB::table('inventario.movimientos_mercaderia')
+        ->where('total_movimiento',$proveedor['ingreso_total'])
+        ->where('tipo_movimiento',$proveedor['tipo_movimiento'])
+        ->where('tipo_documento',$proveedor['tipo_documento'])->orderBy('id','DESC')
+        ->first();
+
+        foreach ($detalles as $key => $value) { 
+            DB::table('inventario.detalles_movimientos_mercaderia')->insert(
+                [
+                    'id_producto'=>$value['id'],
+                    'cantidad'=>$value['cantidad_fac'],
+                    'id_movimiento'=>$last_movimiento->id
+                ]
+                );
+
+            $data_prod=DB::table('inventario.productos')->select('cantidad')->where('id',$value['id'])->first();
+            $suma=$data_prod->cantidad+$value['cantidad_fac'];
+            DB::table('inventario.productos')->where('id',$value['id'])->update(['cantidad'=>$suma]);
+        }
+
+	   
 	    return response()->json(['respuesta' => true], 200);
     }
 
     public function Get_Movimientos(Request $request)
     {
-    $currentPage = $request->pagina_actual;
-    $limit = $request->limit;
+        $currentPage = $request->pagina_actual;
+        $limit = $request->limit;
 
-    if ($request->has('filter')&&$request->filter!='') {
-        $data=DB::table('inventario.movimientos_mercaderia')
-                                                ->where('id','LIKE','%'.$request->input('filter').'%')
-                                                //->orwhere('descripcion','LIKE','%'.$request->input('filter').'%')
-                                                ->where('estado','A')->orderBy('id','ASC')->get();
-    }else{
-        $data=DB::table('inventario.movimientos_mercaderia')->where('estado','A')->orderBy('id','ASC')->get();
-    }
-    $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
-    return response()->json(['respuesta' => $data], 200);
+        if ($request->has('filter')&&$request->filter!='') {
+            $data=DB::table('inventario.movimientos_mercaderia')
+                                                    ->where('id','LIKE','%'.$request->input('filter').'%')
+                                                    //->orwhere('descripcion','LIKE','%'.$request->input('filter').'%')
+                                                    ->where('estado','A')->orderBy('id','ASC')->get();
+        }else{
+            $data=DB::table('inventario.movimientos_mercaderia')->where('estado','A')->orderBy('id','ASC')->get();
+        }
+
+        foreach ($data as $key => $value) {
+            //selecionar Tipo de documento
+            $data_tipo_documento=DB::table('public.tipo_documentos')->select('nombre','id')->where('id',$value->tipo_documento)->first();
+            $value->tipo_documento=$data_tipo_documento;
+            //selecionar Proveedor
+            $data_proveedor=DB::table('inventario.proveedores')->select('nombre','id')->where('id',$value->id_proveedor)->first();
+            $value->id_proveedor=$data_proveedor;
+        }
+
+        $data=$this->funciones->paginarDatos($data,$currentPage,$limit);
+        return response()->json(['respuesta' => $data], 200);
     }
 
     public function Update_Movimientos(Request $request)
     {
-    $data=DB::table('inventario.movimientos_mercaderia')->where('id',$request->id)->update(['nombre' => $request->nombre , 'descripcion' => $request->descripcion]);
-    return response()->json(['respuesta' => true], 200);
+        $data=DB::table('inventario.movimientos_mercaderia')->where('id',$request->id)->update(['nombre' => $request->nombre , 'descripcion' => $request->descripcion]);
+        return response()->json(['respuesta' => true], 200);
     }
 
     public function Delete_Movimientos(Request $request)
     {
-    $data=DB::table('inventario.movimientos_mercaderia')->where('id',$request->id)->update(['estado'=>'I']);
-    return response()->json(['respuesta' => true], 200);
+        $data=DB::table('inventario.movimientos_mercaderia')->where('id',$request->id)->update(['estado'=>'I']);
+        return response()->json(['respuesta' => true], 200);
     }
 }
