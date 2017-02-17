@@ -31,7 +31,7 @@ class ReportesController extends Controller
 
     public function Get_Prods_Mas_Vendidos(Request $request)
     {
-	    $productos=DB::select("SELECT codigo_prod,SUM(cast(cantidad as int)) as suma FROM facturacion_proformas.detalle_factura_venta WHERE estado='A' GROUP BY codigo_prod order By suma DESC;");
+	    $productos=DB::select("SELECT codigo_prod,SUM(cast(cantidad as int)) as suma FROM facturacion_proformas.detalle_factura_venta WHERE estado='A' GROUP BY codigo_prod order By suma DESC LIMIT 5;");
 	    $labels=[];
 	    $sumas=[];
 
@@ -53,7 +53,11 @@ class ReportesController extends Controller
     }
 
     public function Get_Ventas_X_Mes(Request $request)
-    {
+    {   
+        $mes_request=$request->mes;
+        //return response()->json(['respuesta' => $mes_request['nombre']], 200);
+
+        if ($mes_request['nombre']=='TODOS') {
         $ventas=DB::select("SELECT count(*)as nro_ventas,date_trunc( 'month', fecha_creacion ) AS mes FROM facturacion_proformas.factura_venta GROUP BY date_trunc( 'month', fecha_creacion ) ORDER BY nro_ventas DESC;");
         $labels=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
         $sumas=[0,0,0,0,0,0,0,0,0,0,0,0];
@@ -67,10 +71,27 @@ class ReportesController extends Controller
                     $sumas[$key]=(integer)$venta->nro_ventas;
                 }
             }
-            
         }
-
         return response()->json(['respuesta' => true,'labels'=>$labels,'sumas'=>$sumas], 200);
+        }else{
+            
+            $ventas=DB::select("SELECT count(*)as nro_ventas,date_trunc( 'day', fecha_creacion ) AS fecha_creacion FROM facturacion_proformas.factura_venta GROUP BY date_trunc( 'day', fecha_creacion ) ORDER BY nro_ventas DESC;");
+            $a=0;
+            $sumas=[];
+            $labels=[];
+
+            foreach ($ventas as $key => $value) {
+                $fecha_venta= new Date($value->fecha_creacion);
+                $fecha_mes=$fecha_venta->month;
+                if ($fecha_mes==$mes_request['id']) {
+                    $sumas[$a]=$fecha_venta->day;
+                    $labels[$a]=$fecha_venta->toDateString();
+                    $a++;
+                }
+                
+            }
+            return response()->json(['respuesta' => true,'labels'=>$labels,'sumas'=>$sumas], 200);
+        }
 
     }
 
